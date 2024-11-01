@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRS COMPILER'S</title>
+
+</head>
+<body>
+  <!-- Navbar -->
+<STYLE>
+
+* {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f3f4f6;
+      color: #333;
+      padding: 20px;
+      min-height: 100vh;
+      transition: background-color 0.3s ease-in-out;
+    }
+    
+    /* Navbar */
+    .navbar {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #333;
+      color: #fff;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .navbar a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+    }
+    .navbar button {
+      padding: 5px 10px;
+      color: #333;
+      background-color: #f9f9f9;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .navbar button:hover {
+      background-color: #ddd;
+    }
+
+    /* Container and Editor Styles */
+    .container {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 1000px;
+      height: 60vh;
+      transition: height 0.3s ease-in-out;
+    }
+    .editor-section {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 180px;
+      overflow: hidden;
+      border-radius: 5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: flex 0.3s ease;
+    }
+    .editor-section:hover {
+      flex: 1.5;
+    }
+    .editor-section label {
+      font-weight: bold;
+      padding: 8px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      font-size: 14px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+    }
+    .editor-section textarea {
+      flex: 1;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 14px;
+      resize: none;
+      border: none;
+      outline: none;
+      overflow-y: auto;
+      background: #f0f0f0;
+      transition: background-color 0.3s;
+    }
+    .editor-section textarea:focus {
+      background-color: #e8e8e8;
+    }
+
+    /* Color-coded editors */
+    #html-code { background: #fff5f2; }
+    #css-code { background: #f2f9ff; }
+    #js-code { background: #fffdf2; }
+
+    /* Output Styles */
+    .output-section {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .output-section h2 {
+      background-color: #333;
+      color: #fff;
+      padding: 8px;
+      text-align: center;
+      font-size: 14px;
+    }
+    iframe#output-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background-color: #fff;
+    }
+</STYLE>
+  <div class="navbar">
+    <div>
+      <a href="#">Home</a>
+      <a href="#">Coder's Union</a>
+    </div>
+    <div>
+      <span id="user-email" style="margin-right: 10px; font-weight: bold;"></span>
+      <button id="login-btn">Login</button>
+      <button id="signup-btn">Sign Up</button>
+      <button id="logout-btn" style="display: none;">Logout</button>
+      <button id="share-btn">Share Code</button>
+    </div>
+  </div>
+
+  <h1>Responsive HTML, CSS, and JavaScript Compiler</h1>
+
+  <!-- Editor and Output Container -->
+  <div class="container">
+    <div class="editor-section">
+      <label for="html-code">HTML Code</label>
+      <textarea id="html-code"></textarea>
+    </div>
+    <div class="editor-section">
+      <label for="css-code">CSS Code</label>
+      <textarea id="css-code"></textarea>
+    </div>
+    <div class="editor-section">
+      <label for="js-code">JavaScript Code</label>
+      <textarea id="js-code"></textarea>
+    </div>
+    <div class="output-section">
+      <h2>Live Output</h2>
+      <iframe id="output-frame"></iframe>
+    </div>
+  </div>
+
+  <!-- Firebase App and Modules -->
+  <script type="module">
+    // Firebase imports (as modules)
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+    import { getDatabase, ref, push, set } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js';
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNyZAmw3D8aCqNOHOw0f3YKtZWNatauN8",
+  authDomain: "hello-4105a.firebaseapp.com",
+  databaseURL: "https://hello-4105a-default-rtdb.firebaseio.com",
+  projectId: "hello-4105a",
+  storageBucket: "hello-4105a.appspot.com",
+  messagingSenderId: "978669199403",
+  appId: "1:978669199403:web:6c20e3dbaf815bba890a6e",
+  measurementId: "G-2TGPP3E88X"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+
+    // Element References
+    const htmlCode = document.getElementById("html-code");
+    const cssCode = document.getElementById("css-code");
+    const jsCode = document.getElementById("js-code");
+    const outputFrame = document.getElementById("output-frame");
+    const shareBtn = document.getElementById("share-btn");
+    const loginBtn = document.getElementById("login-btn");
+    const signupBtn = document.getElementById("signup-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const userEmailDisplay = document.getElementById("user-email");
+
+    // Update Output
+    function updateOutput() {
+      const html = htmlCode.value;
+      const css = `<style>${cssCode.value}</style>`;
+      const js = `<script>${jsCode.value}<\/script>`;
+      const output = `${html}${css}${js}`;
+      outputFrame.contentDocument.open();
+      outputFrame.contentDocument.write(output);
+      outputFrame.contentDocument.close();
+    }
+
+    htmlCode.addEventListener("input", updateOutput);
+    cssCode.addEventListener("input", updateOutput);
+    jsCode.addEventListener("input", updateOutput);
+
+    // Auth Functions
+    function login(email, password) {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert("Logged in successfully!");
+          updateUI(userCredential.user);
+        })
+        .catch((error) => alert("Login failed: " + error.message));
+    }
+
+    function signup(email, password) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert("Signup successful!");
+          updateUI(userCredential.user);
+        })
+        .catch((error) => alert("Signup failed: " + error.message));
+    }
+
+    function logout() {
+      signOut(auth).then(() => {
+        alert("Logged out!");
+        updateUI(null);
+      }).catch((error) => alert("Logout failed: " + error.message));
+    }
+
+    function updateUI(user) {
+      if (user) {
+        loginBtn.style.display = 'none';
+        signupBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline';
+        userEmailDisplay.textContent = `Logged in as: ${user.email}`;
+      } else {
+        loginBtn.style.display = 'inline';
+        signupBtn.style.display = 'inline';
+        logoutBtn.style.display = 'none';
+        userEmailDisplay.textContent = '';
+      }
+    }
+
+    // Share Code
+    shareBtn.addEventListener("click", () => {
+      const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>${cssCode.value}</style>
+</head>
+<body>
+  ${htmlCode.value}
+  <script>${jsCode.value}<\/script>
+</body>
+</html>`;
+
+      const file = new Blob([htmlContent], { type: "text/html" });
+      const fileRef = storageRef(storage, `shared_code/${Date.now()}_code.html`);
+
+      if (auth.currentUser) {
+        uploadBytes(fileRef, file).then(() => {
+          getDownloadURL(fileRef).then((url) => {
+            alert(`Code shared successfully! Here is your link: ${url}`);
+          });
+        }).catch((error) => alert("Error uploading file: " + error.message));
+      } else {
+        alert("Please log in to save and share your code.");
+      }
+    });
+
+    // Event Listeners for Login, Signup, and Logout
+    loginBtn.addEventListener("click", () => {
+      const email = prompt("Enter your email:");
+      const password = prompt("Enter your password:");
+      login(email, password);
+    });
+
+    signupBtn.addEventListener("click", () => {
+      const email = prompt("Enter your email:");
+      const password = prompt("Enter your password:");
+      signup(email, password);
+    });
+
+    logoutBtn.addEventListener("click", logout);
+
+    // Initialize UI based on current auth state
+    auth.onAuthStateChanged(updateUI);
+  </script>
+</body>
+</html>
